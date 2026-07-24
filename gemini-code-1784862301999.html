@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아기 비타민 D 보충량 계산기</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .calculator-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #3182ce;
+        }
+
+        .input-wrapper .unit {
+            position: absolute;
+            right: 16px;
+            color: #a0aec0;
+            font-weight: 600;
+        }
+
+        .result-box {
+            background-color: #edf2f7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+
+        .result-item.highlight {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 2px dashed #cbd5e0;
+            font-weight: 700;
+            color: #2b6cb0;
+            font-size: 1.1rem;
+        }
+
+        .result-value {
+            font-weight: 600;
+        }
+
+        .highlight .result-value {
+            font-size: 1.2rem;
+            color: #2b6cb0;
+        }
+
+        .info-text {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #718096;
+            line-height: 1.4;
+            background-color: #fffaf0;
+            border-left: 4px solid #dd6b20;
+            padding: 10px 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h1 class="title">🍼 아기 비타민 D 보충량 계산기</h1>
+
+    <div class="input-group">
+        <label for="formulaInput">하루 총 수유량</label>
+        <div class="input-wrapper">
+            <input type="number" id="formulaInput" placeholder="예: 700" min="0" oninput="calculateVitaminD()">
+            <span class="unit">ml</span>
+        </div>
+    </div>
+
+    <div class="result-box">
+        <div class="result-item">
+            <span>돌 전 하루 권장 섭취량</span>
+            <span class="result-value">400 IU</span>
+        </div>
+        <div class="result-item">
+            <span>분유 통한 섭취량 (추정)</span>
+            <span class="result-value" id="intakeValue">0 IU</span>
+        </div>
+        <div class="result-item highlight">
+            <span>추가 보충 필요량</span>
+            <span class="result-value" id="neededValue">400 IU</span>
+        </div>
+    </div>
+
+    <div class="info-text">
+        * 분유 100ml당 약 48 IU의 비타민 D가 포함되어 있다고 계산한 추정치입니다. (제품에 따라 상이할 수 있습니다.)
+    </div>
+</div>
+
+<script>
+    function calculateVitaminD() {
+        const inputField = document.getElementById('formulaInput');
+        const intakeDisplay = document.getElementById('intakeValue');
+        const neededDisplay = document.getElementById('neededValue');
+
+        let amount = parseFloat(inputField.value);
+
+        // 입력값이 없거나 음수인 경우 예외 처리
+        if (isNaN(amount) || amount < 0) {
+            intakeDisplay.textContent = '0 IU';
+            neededDisplay.textContent = '400 IU';
+            return;
+        }
+
+        // 1. 분유를 통한 비타민 D 섭취량 계산 (수유량 * 0.48)
+        let intake = Math.round(amount * 0.48);
+
+        // 2. 추가 필요한 보충량 계산 (400 IU - 분유 섭취량)
+        let needed = 400 - intake;
+
+        // 보충량이 음수일 경우 (분유만으로 400 IU 이상 섭취 시) 0 IU 처리
+        if (needed < 0) {
+            needed = 0;
+        }
+
+        // 결과 업데이트
+        intakeDisplay.textContent = `${intake} IU`;
+        neededDisplay.textContent = `${needed} IU`;
+    }
+</script>
+
+</body>
+</html>
